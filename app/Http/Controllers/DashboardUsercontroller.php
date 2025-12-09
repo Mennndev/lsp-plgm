@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pendaftaran;
+use App\Models\PengajuanSkema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
@@ -16,11 +17,16 @@ class DashboardUserController extends Controller
         // TODO: ganti collect() dengan query ke database masing-masing
         // contoh nanti:
         // $asesmenList   = Asesmen::where('user_id', $user->id)->latest()->get();
-        // $pengajuanList = PengajuanSkema::where('user_id', $user->id)->latest()->get();
         // $riwayatList   = RiwayatAsesmen::where('user_id', $user->id)->latest()->get();
 
         $asesmenList   = collect();  // data untuk tabel "Beranda"
-        $pengajuanList = collect();  // data untuk tabel "Pengajuan Skema"
+        
+        // Fetch user's pengajuan skema
+        $pengajuanList = PengajuanSkema::with('program')
+            ->where('user_id', $user->id)
+            ->latest('tanggal_pengajuan')
+            ->get();
+        
         $riwayatList   = collect();  // data untuk tabel "Riwayat Asesmen"
 
         $notificationCount = 0;      // kalau nanti ada notifikasi, isi dari DB

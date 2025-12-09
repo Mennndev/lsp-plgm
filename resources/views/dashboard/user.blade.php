@@ -186,9 +186,9 @@
                         <p>Daftar skema sertifikasi yang diajukan.</p>
                     </div>
                     <div class="pull-right">
-                        <button class="btn btn-page-header">
-                            Pengajuan Skema
-                        </button>
+                        <a href="{{ route('Skema.index') }}" class="btn btn-page-header">
+                            <i class="fa fa-plus"></i> Ajukan Skema Baru
+                        </a>
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -206,28 +206,25 @@
                         </thead>
                         <tbody>
                         @forelse($pengajuanList as $index => $pengajuan)
-                            {{-- TODO: sesuaikan field dengan kolom tabel pengajuan skema --}}
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $pengajuan->nama_skema ?? '-' }}</td>
-                                <td>{{ $pengajuan->tanggal_pengajuan ?? '-' }}</td>
+                                <td>{{ $pengajuan->program->nama ?? '-' }}</td>
+                                <td>{{ $pengajuan->tanggal_pengajuan ? $pengajuan->tanggal_pengajuan->format('d/m/Y H:i') : '-' }}</td>
                                 <td>
-                                    @php
-                                        $status = strtolower($pengajuan->status ?? 'pending');
-                                    @endphp
-                                    <span class="status-badge {{ $status }}">
-                                        {{ ucfirst($status) }}
+                                    <span class="status-badge {{ $pengajuan->status }}">
+                                        {{ $pengajuan->status_label }}
                                     </span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-success btn-xs btn-custom">Lihat Detail</button>
+                                    <a href="{{ route('pengajuan.show', $pengajuan->id) }}" class="btn btn-success btn-xs btn-custom">Lihat Detail</a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="5" class="text-center empty-table">
                                     <i class="fa fa-inbox empty-icon"></i>
-                                    <p>Tidak ada data</p>
+                                    <p>Belum ada pengajuan skema</p>
+                                    <a href="{{ route('Skema.index') }}" class="btn btn-primary btn-sm">Ajukan Skema Sekarang</a>
                                 </td>
                             </tr>
                         @endforelse

@@ -151,6 +151,16 @@
                         <i class="bi bi-check2-circle mr-1"></i> Daftar Uji Kompetensi
                     </a>
 
+                    @auth
+                        <a href="{{ route('pengajuan.create', $program->id) }}" class="btn btn-success mb-2">
+                            <i class="bi bi-file-earmark-plus mr-1"></i> Daftar Skema Ini
+                        </a>
+                    @else
+                        <a href="{{ route('login', ['intended' => route('pengajuan.create', $program->id)]) }}" class="btn btn-success mb-2">
+                            <i class="bi bi-file-earmark-plus mr-1"></i> Daftar Skema Ini
+                        </a>
+                    @endauth
+
                     @if ($program->file_panduan)
                         <a href="{{ asset('storage/'.$program->file_panduan) }}"
                            class="btn btn-skema-outline mb-2" target="_blank">
