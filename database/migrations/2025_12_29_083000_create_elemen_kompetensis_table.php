@@ -6,28 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('pengajuan_apl02', function (Blueprint $table) {
+        Schema::create('elemen_kompetensis', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('pengajuan_skema_id')
-                  ->constrained('pengajuan_skema')
-                  ->cascadeOnDelete();
-
             $table->foreignId('unit_kompetensi_id')
                   ->constrained('unit_kompetensis')
                   ->cascadeOnDelete();
-
-            // Self assessment data (JSON)
-            $table->json('self_assessment')->nullable();
-
+            $table->unsignedInteger('no_urut')->default(1);
+            $table->string('nama_elemen');
             $table->timestamps();
         });
     }
 
+    /**
+     * Run the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('pengajuan_apl02');
+        Schema::dropIfExists('elemen_kompetensis');
     }
 };

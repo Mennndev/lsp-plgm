@@ -161,49 +161,136 @@
     <hr>
 <h6 class="mt-4 mb-2 fw-bold">Unit Kompetensi</h6>
 
-<table class="table table-bordered">
-    <thead>
-    <tr>
-        <th width="50">No</th>
-        <th width="180">Kode Unit</th>
-        <th>Judul Unit</th>
-        <th width="80">Aksi</th>
-    </tr>
-    </thead>
-    <tbody id="unit-wrapper">
+<div id="unit-wrapper">
     @if(isset($program) && $program && $program->units->count())
-        @foreach($program->units as $i => $unit)
-            <tr>
-                <td class="text-center">{{ $i + 1 }}</td>
-                <td>
-                    <input type="text" name="unit_kode[]" class="form-control"
-                           value="{{ $unit->kode_unit }}" required>
-                </td>
-                <td>
-                    <input type="text" name="unit_judul[]" class="form-control"
-                           value="{{ $unit->judul_unit }}" required>
-                </td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-danger btn-sm remove-unit">
-                        <i class="bi bi-trash"></i>
+        @foreach($program->units as $unitIndex => $unit)
+            <div class="unit-card card mb-3">
+                <div class="card-header bg-light">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <strong>Unit {{ $unitIndex + 1 }}</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" name="unit_kode[]" class="form-control form-control-sm"
+                                   value="{{ $unit->kode_unit }}" placeholder="Kode Unit" required>
+                        </div>
+                        <div class="col">
+                            <input type="text" name="unit_judul[]" class="form-control form-control-sm"
+                                   value="{{ $unit->judul_unit }}" placeholder="Judul Unit" required>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-danger btn-sm remove-unit">
+                                <i class="bi bi-trash"></i> Hapus Unit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-2">Elemen Kompetensi</h6>
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="50">No</th>
+                                <th>Nama Elemen Kompetensi</th>
+                                <th width="80">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="elemen-wrapper">
+                            @if($unit->elemenKompetensis && $unit->elemenKompetensis->count())
+                                @foreach($unit->elemenKompetensis as $elemenIndex => $elemen)
+                                    <tr>
+                                        <td class="text-center">{{ $elemenIndex + 1 }}</td>
+                                        <td>
+                                            <input type="text" name="elemen_nama[{{ $unitIndex }}][]" 
+                                                   class="form-control form-control-sm"
+                                                   value="{{ $elemen->nama_elemen }}" 
+                                                   placeholder="Nama Elemen Kompetensi" required>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-danger btn-sm remove-elemen">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td class="text-center">1</td>
+                                    <td>
+                                        <input type="text" name="elemen_nama[{{ $unitIndex }}][]" 
+                                               class="form-control form-control-sm"
+                                               placeholder="Nama Elemen Kompetensi" required>
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-danger btn-sm remove-elemen">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-outline-secondary btn-sm add-elemen">
+                        <i class="bi bi-plus-circle"></i> Tambah Elemen
                     </button>
-                </td>
-            </tr>
+                </div>
+            </div>
         @endforeach
     @else
-        <tr>
-            <td class="text-center">1</td>
-            <td><input type="text" name="unit_kode[]" class="form-control"></td>
-            <td><input type="text" name="unit_judul[]" class="form-control"></td>
-            <td class="text-center">
-                <button type="button" class="btn btn-danger btn-sm remove-unit">
-                    <i class="bi bi-trash"></i>
+        <div class="unit-card card mb-3">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <strong>Unit 1</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="unit_kode[]" class="form-control form-control-sm"
+                               placeholder="Kode Unit" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" name="unit_judul[]" class="form-control form-control-sm"
+                               placeholder="Judul Unit" required>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-danger btn-sm remove-unit">
+                            <i class="bi bi-trash"></i> Hapus Unit
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <h6 class="mb-2">Elemen Kompetensi</h6>
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="50">No</th>
+                            <th>Nama Elemen Kompetensi</th>
+                            <th width="80">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="elemen-wrapper">
+                        <tr>
+                            <td class="text-center">1</td>
+                            <td>
+                                <input type="text" name="elemen_nama[0][]" 
+                                       class="form-control form-control-sm"
+                                       placeholder="Nama Elemen Kompetensi" required>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-danger btn-sm remove-elemen">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-outline-secondary btn-sm add-elemen">
+                    <i class="bi bi-plus-circle"></i> Tambah Elemen
                 </button>
-            </td>
-        </tr>
+            </div>
+        </div>
     @endif
-    </tbody>
-</table>
+</div>
 
 <button type="button" class="btn btn-outline-primary btn-sm" id="add-unit">
     <i class="bi bi-plus-circle"></i> Tambah Unit

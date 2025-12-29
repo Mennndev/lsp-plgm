@@ -17,4 +17,9 @@ class UnitKompetensi extends Model
     {
         return $this->belongsTo(ProgramPelatihan::class, 'program_pelatihan_id');
     }
+
+    public function elemenKompetensis()
+    {
+        return $this->hasMany(ElemenKompetensi::class)->orderBy('no_urut');
+    }
 }
