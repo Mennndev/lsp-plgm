@@ -467,28 +467,53 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @for($i=1; $i<=3; $i++)
-                      @php $oldStatus = old("self_assessment.{$unit->id}.{$i}.status"); @endphp
-                      <tr>
-                        <td>Elemen {{ $i }} - {{ $unit->judul_unit }}</td>
+                    @if($unit->elemenKompetensis && $unit->elemenKompetensis->count() > 0)
+                      @foreach($unit->elemenKompetensis as $elemenIndex => $elemen)
+                        @php $oldStatus = old("self_assessment.{$unit->id}.{$elemen->id}.status"); @endphp
+                        <tr>
+                          <td>Elemen {{ $elemen->no_urut }} - {{ $elemen->nama_elemen }}</td>
 
-                        <td class="text-center">
-                          <input type="radio"
-                                 class="form-check-input"
-                                 name="self_assessment[{{ $unit->id }}][{{ $i }}][status]"
-                                 value="K"
-                                 {{ $oldStatus === 'K' ? 'checked' : '' }}>
-                        </td>
+                          <td class="text-center">
+                            <input type="radio"
+                                   class="form-check-input"
+                                   name="self_assessment[{{ $unit->id }}][{{ $elemen->id }}][status]"
+                                   value="K"
+                                   {{ $oldStatus === 'K' ? 'checked' : '' }}>
+                          </td>
 
-                        <td class="text-center">
-                          <input type="radio"
-                                 class="form-check-input"
-                                 name="self_assessment[{{ $unit->id }}][{{ $i }}][status]"
-                                 value="BK"
-                                 {{ $oldStatus === 'BK' ? 'checked' : '' }}>
-                        </td>
-                      </tr>
-                    @endfor
+                          <td class="text-center">
+                            <input type="radio"
+                                   class="form-check-input"
+                                   name="self_assessment[{{ $unit->id }}][{{ $elemen->id }}][status]"
+                                   value="BK"
+                                   {{ $oldStatus === 'BK' ? 'checked' : '' }}>
+                          </td>
+                        </tr>
+                      @endforeach
+                    @else
+                      @for($i=1; $i<=3; $i++)
+                        @php $oldStatus = old("self_assessment.{$unit->id}.{$i}.status"); @endphp
+                        <tr>
+                          <td>Elemen {{ $i }} - {{ $unit->judul_unit }}</td>
+
+                          <td class="text-center">
+                            <input type="radio"
+                                   class="form-check-input"
+                                   name="self_assessment[{{ $unit->id }}][{{ $i }}][status]"
+                                   value="K"
+                                   {{ $oldStatus === 'K' ? 'checked' : '' }}>
+                          </td>
+
+                          <td class="text-center">
+                            <input type="radio"
+                                   class="form-check-input"
+                                   name="self_assessment[{{ $unit->id }}][{{ $i }}][status]"
+                                   value="BK"
+                                   {{ $oldStatus === 'BK' ? 'checked' : '' }}>
+                          </td>
+                        </tr>
+                      @endfor
+                    @endif
                     </tbody>
                   </table>
                 </div>

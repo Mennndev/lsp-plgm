@@ -61,12 +61,25 @@ class ProgramPelatihanController extends Controller
 if ($request->unit_kode) {
     foreach ($request->unit_kode as $i => $kode) {
         if ($kode && $request->unit_judul[$i]) {
-            UnitKompetensi::create([
+            $unit = UnitKompetensi::create([
                 'program_pelatihan_id' => $program->id,
                 'no_urut'    => $i + 1,
                 'kode_unit'  => $kode,
                 'judul_unit' => $request->unit_judul[$i],
             ]);
+
+            // Simpan elemen kompetensi untuk unit ini
+            if (isset($request->elemen_nama[$i]) && is_array($request->elemen_nama[$i])) {
+                foreach ($request->elemen_nama[$i] as $elemenIndex => $namaElemen) {
+                    if ($namaElemen) {
+                        \App\Models\ElemenKompetensi::create([
+                            'unit_kompetensi_id' => $unit->id,
+                            'no_urut' => $elemenIndex + 1,
+                            'nama_elemen' => $namaElemen,
+                        ]);
+                    }
+                }
+            }
         }
     }
 }
@@ -136,12 +149,25 @@ if ($request->profesi_nama) {
     if ($request->unit_kode) {
         foreach ($request->unit_kode as $i => $kode) {
             if ($kode && $request->unit_judul[$i]) {
-                UnitKompetensi::create([
+                $unit = UnitKompetensi::create([
                     'program_pelatihan_id' => $program_pelatihan->id,
                     'no_urut'    => $i + 1,
                     'kode_unit'  => $kode,
                     'judul_unit' => $request->unit_judul[$i],
                 ]);
+
+                // Simpan elemen kompetensi untuk unit ini
+                if (isset($request->elemen_nama[$i]) && is_array($request->elemen_nama[$i])) {
+                    foreach ($request->elemen_nama[$i] as $elemenIndex => $namaElemen) {
+                        if ($namaElemen) {
+                            \App\Models\ElemenKompetensi::create([
+                                'unit_kompetensi_id' => $unit->id,
+                                'no_urut' => $elemenIndex + 1,
+                                'nama_elemen' => $namaElemen,
+                            ]);
+                        }
+                    }
+                }
             }
         }
     }

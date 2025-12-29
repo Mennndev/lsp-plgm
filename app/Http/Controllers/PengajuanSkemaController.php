@@ -36,7 +36,7 @@ class PengajuanSkemaController extends Controller
      public function create($programId)
     {
         // Cari program
-        $program = ProgramPelatihan::with('units')->findOrFail($programId);
+        $program = ProgramPelatihan::with('units.elemenKompetensis')->findOrFail($programId);
 
         // Cek apakah user sudah pernah mengajukan skema ini (status pending/approved)
         $existingPengajuan = PengajuanSkema::where('user_id', Auth::id())
