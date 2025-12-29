@@ -493,58 +493,28 @@
                   </table>
                 </div>
 
-                {{-- Portfolio --}}
-                <div class="portfolio-upload-section">
-                  <h6 class="fw-bold mb-3">
-                    <i class="bi bi-folder-plus"></i> Upload Portfolio/Bukti untuk Unit Ini
-                  </h6>
+                {{-- Upload Bukti Portfolio --}}
+                <div class="mb-3">
+                  <label class="form-label fw-bold">
+                    <i class="bi bi-upload"></i> Upload Bukti Portfolio
+                  </label>
+                  <input type="file"
+                         class="form-control"
+                         name="portfolio[{{ $unit->id }}][]"
+                         accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                         multiple>
+                  <small class="text-muted">
+                    Format: PDF, JPG, PNG, DOC, DOCX. Maks 2MB per file. Boleh upload lebih dari satu file.
+                  </small>
+                </div>
 
-                  @php
-                    $oldPortfolioDesc = old("portfolio_deskripsi.{$unit->id}", []);
-                    if (!is_array($oldPortfolioDesc) || count($oldPortfolioDesc) === 0) {
-                      $oldPortfolioDesc = ['']; // minimal 1 baris
-                    }
-                  @endphp
-
-                  <div class="portfolio-container" id="portfolio-container-{{ $unit->id }}">
-                    @foreach($oldPortfolioDesc as $pIndex => $desc)
-                      <div class="portfolio-item mb-3">
-                        <div class="row g-2 align-items-start">
-                          <div class="col-md-6">
-                            <input type="file"
-                                   class="form-control form-control-sm"
-                                   name="portfolio[{{ $unit->id }}][]"
-                                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
-                            <small class="text-muted">
-                              File harus dipilih ulang jika validasi gagal. Max 5MB.
-                            </small>
-                          </div>
-
-                          <div class="col-md-6">
-                            <input type="text"
-                                   class="form-control form-control-sm"
-                                   name="portfolio_deskripsi[{{ $unit->id }}][]"
-                                   value="{{ old("portfolio_deskripsi.{$unit->id}.{$pIndex}", $desc) }}"
-                                   placeholder="Deskripsi portfolio (opsional)">
-                          </div>
-
-                          <div class="col-12">
-                            @if($pIndex > 0)
-                              <button type="button" class="btn btn-sm btn-danger btn-remove-portfolio">
-                                <i class="bi bi-trash"></i> Hapus Baris
-                              </button>
-                            @endif
-                          </div>
-                        </div>
-                      </div>
-                    @endforeach
-                  </div>
-
-                  <button type="button"
-                          class="btn btn-sm btn-outline-primary btn-add-portfolio"
-                          data-unit-id="{{ $unit->id }}">
-                    <i class="bi bi-plus-circle"></i> Tambah Portfolio untuk Unit Ini
-                  </button>
+                {{-- Deskripsi Bukti --}}
+                <div class="mb-3">
+                  <label class="form-label">Deskripsi Bukti (opsional)</label>
+                  <textarea class="form-control"
+                            name="portfolio_deskripsi[{{ $unit->id }}][]"
+                            rows="2"
+                            placeholder="Jelaskan bukti yang Anda upload...">{{ old("portfolio_deskripsi.{$unit->id}.0", '') }}</textarea>
                 </div>
 
                 <hr class="my-4">
@@ -683,16 +653,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const lastStep = {{ (int) old('current_step', 1) }};
   if (window.goToStep) window.goToStep(lastStep);
 
-  // 2) Hapus baris portfolio (delegation)
-  document.addEventListener('click', function(e){
-    const btn = e.target.closest('.btn-remove-portfolio');
-    if(btn){
-      const item = btn.closest('.portfolio-item');
-      if(item) item.remove();
-    }
-  });
-
-  // 3) Hapus baris dokumen (delegation)
+  // 2) Hapus baris dokumen (delegation)
   document.addEventListener('click', function(e){
     const btn = e.target.closest('.btn-remove-dokumen');
     if(btn){

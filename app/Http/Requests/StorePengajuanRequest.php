@@ -71,7 +71,7 @@ class StorePengajuanRequest extends FormRequest
             $rules['self_assessment.*'] = 'required|array';
 
             $rules['portfolio'] = 'nullable|array';
-            $rules['portfolio.*.*'] = 'file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120';
+            $rules['portfolio.*.*'] = 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:2048';
             $rules['portfolio_deskripsi'] = 'nullable|array';
         }
 
@@ -110,7 +110,7 @@ class StorePengajuanRequest extends FormRequest
             // STEP 3
             'self_assessment.required' => 'Self assessment wajib diisi.',
             'self_assessment.array' => 'Self assessment tidak valid.',
-            'portfolio.*.*.max' => 'Ukuran file portfolio maksimal 5MB.',
+            'portfolio.*.*.max' => 'Ukuran file portfolio maksimal 2MB.',
 
             // STEP 4
             'agree.accepted' => 'Anda harus menyetujui pernyataan.',

@@ -420,71 +420,28 @@
   // PORTFOLIO
   // =========================
   function initializePortfolioUpload() {
-    // delegation: tombol tambah portfolio
-    document.addEventListener('click', function (e) {
-      const btn = e.target.closest('.btn-add-portfolio');
-      if (!btn) return;
-
-      const unitId = btn.getAttribute('data-unit-id');
-      const container = document.getElementById(`portfolio-container-${unitId}`);
-      if (!container) return;
-
-      const first = container.querySelector('.portfolio-item');
-      if (!first) return;
-
-      const newItem = first.cloneNode(true);
-
-      // clear file
-      const fileInput = newItem.querySelector('input[type="file"]');
-      if (fileInput) fileInput.value = '';
-
-      // clear desc
-      const descInput = newItem.querySelector('input[type="text"]');
-      if (descInput) descInput.value = '';
-
-      // pastikan ada tombol hapus
-      if (!newItem.querySelector('.btn-remove-portfolio')) {
-        const col = document.createElement('div');
-        col.className = 'col-12';
-        col.innerHTML = `
-          <button type="button" class="btn btn-sm btn-danger btn-remove-portfolio">
-            <i class="bi bi-trash"></i> Hapus Baris
-          </button>
-        `;
-        const row = newItem.querySelector('.row');
-        if (row) row.appendChild(col);
-        else newItem.appendChild(col);
-      }
-
-      container.appendChild(newItem);
-    });
-
-    // validasi ukuran file portfolio
+    // validasi ukuran file portfolio (2MB per file, multiple files)
     document.addEventListener('change', function (e) {
       const input = e.target;
       if (!input.matches('input[type="file"][name^="portfolio"]')) return;
 
-      const file = input.files && input.files[0];
-      if (!file) return;
+      const maxSize = 2 * 1024 * 1024; // 2MB
+      const files = input.files;
+      if (!files || files.length === 0) return;
 
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        alert('Ukuran file terlalu besar! Maksimal 5MB');
-        input.value = '';
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].size > maxSize) {
+          alert('Ukuran file terlalu besar! Maksimal 2MB per file.\nFile: ' + files[i].name);
+          input.value = '';
+          return;
+        }
       }
     });
   }
 
-  // remove handlers (delegation) untuk dokumen & portfolio
+  // remove handlers (delegation) untuk dokumen saja
   function initializeRemoveHandlers() {
     document.addEventListener('click', function (e) {
-      const btnP = e.target.closest('.btn-remove-portfolio');
-      if (btnP) {
-        const item = btnP.closest('.portfolio-item');
-        if (item) item.remove();
-        return;
-      }
-
       const btnD = e.target.closest('.btn-remove-dokumen');
       if (btnD) {
         const item = btnD.closest('.dokumen-item');
