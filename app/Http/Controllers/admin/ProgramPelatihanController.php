@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\UnitKompetensi;
 use App\Models\ProfesiTerkait;
+use App\Models\PersyaratanDasar;
+use App\Models\BuktiAdministratif;
+use App\Models\BuktiPortofolioTemplate;
+use App\Models\KriteriaUnjukKerja;
 use Mews\Purifier\Facades\Purifier;
 
 class ProgramPelatihanController extends Controller
@@ -103,6 +107,9 @@ if ($request->profesi_nama) {
 
 
 
+        /* ====== SIMPAN PERSYARATAN (NEW 6-TAB SYSTEM) ====== */
+        $this->savePersyaratan($request, $program);
+
         return redirect()
             ->route('admin.program-pelatihan.index')
             ->with('success', 'Program pelatihan berhasil ditambahkan.');
@@ -111,6 +118,15 @@ if ($request->profesi_nama) {
     public function edit(ProgramPelatihan $program_pelatihan)
     {
         // parameter nama variabel mengikuti resource route (program_pelatihan)
+        // Load relationships including new persyaratan
+        $program_pelatihan->load([
+            'units.elemenKompetensis',
+            'profesiTerkait',
+            'persyaratanDasar',
+            'buktiAdministratif',
+            'buktiPortofolioTemplate'
+        ]);
+        
         return view('admin.program-pelatihan.edit', [
             'program' => $program_pelatihan,
         ]);
@@ -188,6 +204,9 @@ if ($request->profesi_nama) {
         }
     }
 
+    /* ====== SIMPAN PERSYARATAN (NEW 6-TAB SYSTEM) ====== */
+    $this->savePersyaratan($request, $program_pelatihan);
+
     return redirect()
         ->route('admin.program-pelatihan.index')
         ->with('success', 'Program pelatihan berhasil diperbarui.');
@@ -237,5 +256,60 @@ if ($request->profesi_nama) {
             'gambar'            => ['nullable', 'image', 'max:2048'],
             'file_panduan'      => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:4096'],
         ]);
+    }
+
+    /**
+     * Save persyaratan (requirements) for the program
+     */
+    protected function savePersyaratan(Request $request, ProgramPelatihan $program): void
+    {
+        // Delete existing persyaratan
+        $program->persyaratanDasar()->delete();
+        $program->buktiAdministratif()->delete();
+        $program->buktiPortofolioTemplate()->delete();
+
+        // Save Persyaratan Dasar
+        if ($request->has('persyaratan_dasar_nama')) {
+            foreach ($request->persyaratan_dasar_nama as $index => $nama) {
+                if ($nama) {
+                    PersyaratanDasar::create([
+                        'program_pelatihan_id' => $program->id,
+                        'nama_dokumen' => $nama,
+                        'tipe_dokumen' => $request->persyaratan_dasar_tipe[$index] ?? 'file_upload',
+                        'is_wajib' => isset($request->persyaratan_dasar_wajib[$index]) && $request->persyaratan_dasar_wajib[$index] == '1',
+                        'urutan' => $request->persyaratan_dasar_urutan[$index] ?? ($index + 1),
+                    ]);
+                }
+            }
+        }
+
+        // Save Bukti Administratif
+        if ($request->has('bukti_administratif_nama')) {
+            foreach ($request->bukti_administratif_nama as $index => $nama) {
+                if ($nama) {
+                    BuktiAdministratif::create([
+                        'program_pelatihan_id' => $program->id,
+                        'nama_dokumen' => $nama,
+                        'tipe_dokumen' => $request->bukti_administratif_tipe[$index] ?? 'file_upload',
+                        'is_wajib' => isset($request->bukti_administratif_wajib[$index]) && $request->bukti_administratif_wajib[$index] == '1',
+                        'urutan' => $request->bukti_administratif_urutan[$index] ?? ($index + 1),
+                    ]);
+                }
+            }
+        }
+
+        // Save Bukti Portofolio Template
+        if ($request->has('bukti_portofolio_nama')) {
+            foreach ($request->bukti_portofolio_nama as $index => $nama) {
+                if ($nama) {
+                    BuktiPortofolioTemplate::create([
+                        'program_pelatihan_id' => $program->id,
+                        'nama_dokumen' => $nama,
+                        'is_wajib' => isset($request->bukti_portofolio_wajib[$index]) && $request->bukti_portofolio_wajib[$index] == '1',
+                        'urutan' => $request->bukti_portofolio_urutan[$index] ?? ($index + 1),
+                    ]);
+                }
+            }
+        }
     }
 }
