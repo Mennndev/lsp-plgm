@@ -6,7 +6,7 @@ use App\Models\ProgramPelatihan;
 use App\Models\UnitKompetensi;
 use App\Models\User;
 use App\Models\ProfesiTerkait;
-use App\Models\Pendaftaran;
+use App\Models\PengajuanSkema;
 
 class DashboardController extends Controller
 {
@@ -17,16 +17,16 @@ class DashboardController extends Controller
         $totalUnit     = UnitKompetensi::count();
         $totalProfesi  = ProfesiTerkait::count();
 
-        // jumlah asesi = user yg pernah daftar (distinct user_id)
-        $totalAsesi    = Pendaftaran::distinct('user_id')->count('user_id');
+        // jumlah asesi = user yang pernah mengajukan skema (distinct user_id)
+        $totalAsesi    = PengajuanSkema::distinct('user_id')->count('user_id');
 
         // PROGRAM TERBARU
         $programTerbaru = ProgramPelatihan::orderByDesc('created_at')
             ->take(5)
             ->get();
 
-        // PENDAFTARAN TERBARU (pakai relasi program() & user())
-        $pendaftaranBaru = Pendaftaran::with(['program', 'user'])
+        // PENGAJUAN SKEMA TERBARU (ganti dari pendaftaranBaru)
+        $pengajuanTerbaru = PengajuanSkema::with(['program', 'user'])
             ->orderByDesc('created_at')
             ->take(5)
             ->get();
@@ -37,7 +37,7 @@ class DashboardController extends Controller
             'totalProfesi',
             'totalAsesi',
             'programTerbaru',
-            'pendaftaranBaru'
+            'pengajuanTerbaru'
         ));
     }
 

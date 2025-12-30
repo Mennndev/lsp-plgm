@@ -194,10 +194,10 @@
             </div>
         </div>
 
-        {{-- PANEL KANAN: PENDAFTARAN TERBARU + INFO SISTEM --}}
+        {{-- PANEL KANAN: PENGAJUAN SKEMA TERBARU + INFO SISTEM --}}
         <div class="col-lg-4 mb-4">
             <div class="admin-table mb-4">
-                <h5>Pendaftaran Terbaru</h5>
+                <h5>Pengajuan Skema Terbaru</h5>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -208,26 +208,33 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @forelse($pendaftaranBaru as $daftar)
+                        @forelse($pengajuanTerbaru as $pengajuan)
                             <tr>
-                                <td>{{ $daftar->user->name ?? '-' }}</td>
-                                <td>{{ $daftar->program->nama ?? '-' }}</td>
+                                <td>{{ $pengajuan->user->name ?? $pengajuan->user->nama ?? '-' }}</td>
+                                <td>{{ Str::limit($pengajuan->program->nama ?? '-', 20) }}</td>
                                 <td>
-                                    <span class="badge bg-info text-dark">
-                                        {{ ucfirst($daftar->status ?? 'pending') }}
+                                    <span class="badge bg-{{ $pengajuan->status_badge_color }} {{ $pengajuan->status_badge_color === 'warning' ? 'text-dark' : '' }}">
+                                        {{ ucfirst($pengajuan->status ?? 'pending') }}
                                     </span>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="3" class="text-center text-muted">
-                                    Belum ada pendaftaran baru.
+                                    Belum ada pengajuan skema.
                                 </td>
                             </tr>
                         @endforelse
                         </tbody>
                     </table>
                 </div>
+                @if($pengajuanTerbaru->count() > 0)
+                <div class="text-end mt-2">
+                    <a href="{{ route('admin.pengajuan.index') }}" class="btn btn-sm btn-outline-primary">
+                        Lihat Semua <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+                @endif
             </div>
 
             <div class="admin-table">
