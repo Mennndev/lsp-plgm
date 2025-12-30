@@ -6,17 +6,19 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin – LSP PLGM')</title>
 
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Icons -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- ADMIN CSS (KHUSUS) -->
     <link rel="stylesheet" href="{{ asset('css/admin-dashboard.css') }}">
+    
+    @stack('styles')
 </head>
 
 <body class="admin-body">
@@ -75,12 +77,12 @@
                 <span class="text-muted me-3">Panel Admin LSP PLGM</span>
 
                 <div class="dropdown">
-                    <a class="dropdown-toggle" href="#" data-toggle="dropdown">
+                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-person-circle"></i>
                         {{ auth()->user()->name ?? 'Administrator' }}
                     </a>
 
-                    <div class="dropdown-menu dropdown-menu-right">
+                    <div class="dropdown-menu dropdown-menu-end">
                         <a class="dropdown-item" href="#">
                             <i class="bi bi-gear"></i> Pengaturan Akun
                         </a>
@@ -109,8 +111,13 @@
 
 </div>
 
-<!-- JS -->
-<script src="{{ asset('js/all.js') }}"></script>
+<!-- jQuery (optional, for legacy code) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- Bootstrap 5 Bundle (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Admin custom JS -->
 <script>
     document.getElementById('menu-toggle').onclick = function () {
         document.getElementById('wrapper').classList.toggle('toggled');
@@ -118,8 +125,6 @@
 </script>
 
 @stack('scripts')
-
-
 
 </body>
 </html>
