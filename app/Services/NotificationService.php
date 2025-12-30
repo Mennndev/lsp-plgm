@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Notification;
 use App\Models\User;
+use App\Models\PengajuanSkema;
 
 class NotificationService
 {
@@ -20,7 +21,7 @@ class NotificationService
         ]);
     }
 
-    public static function sendPengajuanApproved($user, $pengajuan)
+    public static function sendPengajuanApproved(User $user, PengajuanSkema $pengajuan)
     {
         return self::send($user, 
             'Pengajuan Disetujui',
@@ -37,7 +38,7 @@ class NotificationService
         );
     }
 
-    public static function sendPengajuanRejected($user, $pengajuan, $alasan = null)
+    public static function sendPengajuanRejected(User $user, PengajuanSkema $pengajuan, ?string $alasan = null)
     {
         $message = "Maaf, pengajuan skema sertifikasi \"{$pengajuan->program->nama}\" Anda ditolak.";
         if ($alasan) {

@@ -4,18 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = auth()->user()->notifications()->paginate(20);
-        return view('notifications.index', compact('notifications'));
+        $notifications = Auth::user()->notifications()->paginate(20);
+        $unreadCount = Auth::user()->unreadNotificationCount();
+        return view('notifications.index', compact('notifications', 'unreadCount'));
     }
 
     public function markAsRead($id)
     {
-        $notification = Notification::where('user_id', auth()->id())->findOrFail($id);
+        $notification = Notification::where('user_id', Auth::id())->findOrFail($id);
         $notification->markAsRead();
 
         if ($notification->link) {
@@ -27,7 +29,7 @@ class NotificationController extends Controller
 
     public function markAllAsRead()
     {
-        auth()->user()->unreadNotifications()->update([
+        Auth::user()->unreadNotifications()->update([
             'is_read' => true,
             'read_at' => now(),
         ]);
@@ -37,7 +39,7 @@ class NotificationController extends Controller
 
     public function destroy($id)
     {
-        $notification = Notification::where('user_id', auth()->id())->findOrFail($id);
+        $notification = Notification::where('user_id', Auth::id())->findOrFail($id);
         $notification->delete();
 
         return back()->with('success', 'Notifikasi dihapus.');
@@ -46,8 +48,8 @@ class NotificationController extends Controller
     // API endpoint untuk dropdown notifikasi
     public function getLatest()
     {
-        $notifications = auth()->user()->notifications()->take(5)->get();
-        $unreadCount = auth()->user()->unreadNotificationCount();
+        $notifications = Auth::user()->notifications()->take(5)->get();
+        $unreadCount = Auth::user()->unreadNotificationCount();
 
         return response()->json([
             'notifications' => $notifications,

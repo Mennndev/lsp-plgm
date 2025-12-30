@@ -95,7 +95,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading" style="display: flex; justify-content: space-between; align-items: center;">
                         <span>Semua Notifikasi</span>
-                        @if($notifications->where('is_read', false)->count() > 0)
+                        @if($unreadCount > 0)
                             <form action="{{ route('notifications.readAll') }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-sm btn-primary">

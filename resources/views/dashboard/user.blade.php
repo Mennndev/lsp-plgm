@@ -85,7 +85,7 @@
                                         </div>
                                         <div class="notification-content">
                                             <p class="notification-title">{{ $notif->title }}</p>
-                                            <p class="notification-text">{{ Str::limit($notif->message, 50) }}</p>
+                                            <p class="notification-text">{{ \Illuminate\Support\Str::limit($notif->message, 50) }}</p>
                                             <small class="notification-time">{{ $notif->time_ago }}</small>
                                         </div>
                                     </a>
