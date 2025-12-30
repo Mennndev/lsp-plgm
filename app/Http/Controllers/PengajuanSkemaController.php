@@ -10,6 +10,10 @@ use App\Models\PengajuanApl02;
 use App\Models\PengajuanDokumen;
 use App\Models\User;
 use App\Models\PengajuanPortfolio;
+use App\Models\PengajuanPersyaratanDasar;
+use App\Models\PengajuanBuktiAdministratif;
+use App\Models\PengajuanBuktiPortofolio;
+use App\Models\PengajuanBuktiKompetensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -35,8 +39,13 @@ class PengajuanSkemaController extends Controller
 
      public function create($programId)
     {
-        // Cari program
-        $program = ProgramPelatihan::with('units.elemenKompetensis')->findOrFail($programId);
+        // Cari program dengan semua relationships untuk 6-tab system
+        $program = ProgramPelatihan::with([
+            'units.elemenKompetensis.kriteriaUnjukKerja',
+            'persyaratanDasar',
+            'buktiAdministratif',
+            'buktiPortofolioTemplate'
+        ])->findOrFail($programId);
 
         // Cek apakah user sudah pernah mengajukan skema ini (status pending/approved)
         $existingPengajuan = PengajuanSkema::where('user_id', Auth::id())
@@ -49,7 +58,8 @@ class PengajuanSkemaController extends Controller
                 ->with('error', 'Anda sudah mengajukan skema ini dan sedang dalam proses review.');
         }
 
-        return view('pengajuan.create', compact('program'));
+        // Use new 6-tab view
+        return view('pengajuan.create-6tab', compact('program'));
     }
 
     public function store(StorePengajuanRequest $request)
@@ -147,6 +157,103 @@ class PengajuanSkemaController extends Controller
                         'path' => $path,
                         'ukuran' => $file->getSize(),
                     ]);
+                }
+            }
+
+            // Handle persyaratan dasar file uploads (6-tab system)
+            if ($request->hasFile('persyaratan_dasar')) {
+                foreach ($request->file('persyaratan_dasar') as $persyaratanId => $file) {
+                    if ($file && $file->isValid()) {
+                        // Validate file size (max 2MB)
+                        if ($file->getSize() > 2097152) {
+                            throw new \Exception('File persyaratan dasar terlalu besar. Maksimal 2MB.');
+                        }
+
+                        $path = $file->store('pengajuan_persyaratan_dasar', 'public');
+
+                        PengajuanPersyaratanDasar::create([
+                            'pengajuan_skema_id' => $pengajuan->id,
+                            'persyaratan_dasar_id' => $persyaratanId,
+                            'nama_file' => $file->getClientOriginalName(),
+                            'path' => $path,
+                            'ukuran' => $file->getSize(),
+                        ]);
+                    }
+                }
+            }
+
+            // Handle bukti administratif file uploads (6-tab system)
+            if ($request->hasFile('bukti_administratif')) {
+                foreach ($request->file('bukti_administratif') as $buktiId => $file) {
+                    if ($file && $file->isValid()) {
+                        // Validate file size (max 2MB)
+                        if ($file->getSize() > 2097152) {
+                            throw new \Exception('File bukti administratif terlalu besar. Maksimal 2MB.');
+                        }
+
+                        $path = $file->store('pengajuan_bukti_administratif', 'public');
+
+                        PengajuanBuktiAdministratif::create([
+                            'pengajuan_skema_id' => $pengajuan->id,
+                            'bukti_administratif_id' => $buktiId,
+                            'nama_file' => $file->getClientOriginalName(),
+                            'path' => $path,
+                            'ukuran' => $file->getSize(),
+                        ]);
+                    }
+                }
+            }
+
+            // Handle bukti portofolio file uploads (6-tab system)
+            if ($request->hasFile('bukti_portofolio')) {
+                foreach ($request->file('bukti_portofolio') as $portofolioId => $file) {
+                    if ($file && $file->isValid()) {
+                        // Validate file size (max 2MB)
+                        if ($file->getSize() > 2097152) {
+                            throw new \Exception('File bukti portofolio terlalu besar. Maksimal 2MB.');
+                        }
+
+                        $path = $file->store('pengajuan_bukti_portofolio', 'public');
+
+                        PengajuanBuktiPortofolio::create([
+                            'pengajuan_skema_id' => $pengajuan->id,
+                            'bukti_portofolio_template_id' => $portofolioId,
+                            'nama_file' => $file->getClientOriginalName(),
+                            'path' => $path,
+                            'ukuran' => $file->getSize(),
+                        ]);
+                    }
+                }
+            }
+
+            // Handle bukti kompetensi file uploads (6-tab system)
+            if ($request->hasFile('bukti_kompetensi')) {
+                foreach ($request->file('bukti_kompetensi') as $kukId => $file) {
+                    if ($file && $file->isValid()) {
+                        // Validate file size (max 2MB)
+                        if ($file->getSize() > 2097152) {
+                            throw new \Exception('File bukti kompetensi terlalu besar. Maksimal 2MB.');
+                        }
+
+                        $path = $file->store('pengajuan_bukti_kompetensi', 'public');
+
+                        PengajuanBuktiKompetensi::create([
+                            'pengajuan_skema_id' => $pengajuan->id,
+                            'kriteria_unjuk_kerja_id' => $kukId,
+                            'nama_file' => $file->getClientOriginalName(),
+                            'path' => $path,
+                            'ukuran' => $file->getSize(),
+                        ]);
+                    }
+                }
+            }
+
+            // Handle TTD Digital
+            if ($request->has('ttd_digital') && $request->ttd_digital) {
+                // Save digital signature to APL01
+                $apl01 = PengajuanApl01::where('pengajuan_skema_id', $pengajuan->id)->first();
+                if ($apl01) {
+                    $apl01->update(['ttd' => $request->ttd_digital]);
                 }
             }
 
