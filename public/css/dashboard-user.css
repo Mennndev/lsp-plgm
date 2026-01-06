@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+:root {
+    --sidebar-width: 250px;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     background-color: #f5f7fa;
@@ -17,7 +21,7 @@ body {
 }
 
 #wrapper.toggled #sidebar-wrapper {
-    margin-left: -250px;
+    margin-left: calc(-1 * var(--sidebar-width));
 }
 
 #wrapper.toggled .navbar,
@@ -26,7 +30,7 @@ body {
 }
 
 #sidebar-wrapper {
-    width: 250px;
+    width: var(--sidebar-width);
     min-height: 100vh;
     transition: margin 0.3s ease;
     position: fixed;
@@ -39,7 +43,7 @@ body {
 
 #page-content-wrapper {
     flex: 1;
-    margin-left: 250px;
+    margin-left: var(--sidebar-width);
     transition: margin 0.3s ease;
 }
 
@@ -95,7 +99,7 @@ body {
     background: #ffffff;
     border-bottom: 1px solid #e3e6f0;
     box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-    margin-left: 250px;
+    margin-left: var(--sidebar-width);
 }
 
 .navbar .btn-link {
@@ -324,7 +328,7 @@ body {
 /* RESPONSIVE */
 @media (max-width: 768px) {
     #sidebar-wrapper {
-        margin-left: -250px;
+        margin-left: calc(-1 * var(--sidebar-width));
     }
     
     #wrapper.toggled #sidebar-wrapper {
@@ -338,7 +342,7 @@ body {
     
     #wrapper.toggled .navbar,
     #wrapper.toggled #page-content-wrapper {
-        margin-left: 250px;
+        margin-left: var(--sidebar-width);
     }
 
     .main-content {
@@ -360,7 +364,7 @@ body {
     }
 
     #wrapper.toggled #sidebar-wrapper {
-        margin-left: -250px;
+        margin-left: calc(-1 * var(--sidebar-width));
     }
 }
 

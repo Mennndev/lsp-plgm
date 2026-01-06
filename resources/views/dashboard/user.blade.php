@@ -66,7 +66,7 @@
                         <a class="nav-link dropdown-toggle position-relative" href="#" id="notificationDropdown" 
                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa fa-bell-o"></i>
-                            @if($notificationCount > 0)
+                            @if(($notificationCount ?? 0) > 0)
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                     {{ $notificationCount }}
                                 </span>
@@ -75,7 +75,7 @@
                         <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown" style="width: 320px;">
                             <li class="dropdown-header d-flex justify-content-between align-items-center px-3 py-2">
                                 <strong>Notifikasi</strong>
-                                @if($notificationCount > 0)
+                                @if(($notificationCount ?? 0) > 0)
                                     <form action="{{ route('notifications.readAll') }}" method="POST" class="d-inline">
                                         @csrf
                                         <button type="submit" class="btn btn-link btn-sm p-0 text-decoration-none">Tandai semua dibaca</button>
@@ -407,7 +407,7 @@
             if (window.innerWidth < 768) {
                 const sidebar = document.getElementById('sidebar-wrapper');
                 const toggleBtn = document.getElementById('sidebarToggle');
-                if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                if (sidebar && toggleBtn && !sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
                     wrapper.classList.remove('toggled');
                 }
             }
