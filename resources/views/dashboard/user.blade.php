@@ -52,78 +52,86 @@
     {{-- PAGE CONTENT --}}
     <div id="page-content-wrapper">
         {{-- TOP NAVBAR --}}
-        <nav class="navbar navbar-custom navbar-fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
             <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="menu-toggle" id="menu-toggle">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                </div>
-
-                <ul class="nav navbar-nav navbar-right">
+                {{-- Hamburger Toggle --}}
+                <button class="btn btn-link text-dark" type="button" id="sidebarToggle">
+                    <i class="fa fa-bars fs-5"></i>
+                </button>
+                
+                {{-- Right Side --}}
+                <ul class="navbar-nav ms-auto d-flex flex-row align-items-center">
                     {{-- Notification Dropdown --}}
-                    <li class="dropdown notification-dropdown">
-                        <a href="#" class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle position-relative" href="#" id="notificationDropdown" 
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa fa-bell-o"></i>
-                            @if($notificationCount > 0)
-                                <span class="badge bg-danger">{{ $notificationCount }}</span>
+                            @if(($notificationCount ?? 0) > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ $notificationCount }}
+                                </span>
                             @endif
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end notification-menu">
-                            <div class="notification-header">
-                                <span>Notifikasi</span>
-                                @if($notificationCount > 0)
+                        <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown" style="width: 320px;">
+                            <li class="dropdown-header d-flex justify-content-between align-items-center px-3 py-2">
+                                <strong>Notifikasi</strong>
+                                @if(($notificationCount ?? 0) > 0)
                                     <form action="{{ route('notifications.readAll') }}" method="POST" class="d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-link btn-sm p-0">Tandai semua dibaca</button>
+                                        <button type="submit" class="btn btn-link btn-sm p-0 text-decoration-none">Tandai semua dibaca</button>
                                     </form>
                                 @endif
-                            </div>
-                            <div class="notification-body">
-                                @forelse($latestNotifications as $notif)
+                            </li>
+                            <li><hr class="dropdown-divider m-0"></li>
+                            <li class="notification-body" style="max-height: 300px; overflow-y: auto;">
+                                @forelse($latestNotifications ?? [] as $notif)
                                     <a href="{{ route('notifications.read', $notif->id) }}" 
-                                       class="notification-item {{ $notif->is_read ? '' : 'unread' }}">
-                                        <div class="notification-icon text-{{ $notif->type }}">
-                                            <i class="bi {{ $notif->icon }}"></i>
+                                       class="dropdown-item d-flex align-items-start py-2 {{ $notif->is_read ? '' : 'bg-light' }}">
+                                        <div class="notification-icon me-3 text-{{ $notif->type ?? 'primary' }}">
+                                            <i class="bi {{ $notif->icon ?? 'bi-bell' }} fs-5"></i>
                                         </div>
-                                        <div class="notification-content">
-                                            <p class="notification-title">{{ $notif->title }}</p>
-                                            <p class="notification-text">{{ \Illuminate\Support\Str::limit($notif->message, 50) }}</p>
-                                            <small class="notification-time">{{ $notif->time_ago }}</small>
+                                        <div class="flex-grow-1">
+                                            <p class="mb-1 fw-semibold small">{{ $notif->title }}</p>
+                                            <p class="mb-1 text-muted small">{{ Str::limit($notif->message, 50) }}</p>
+                                            <small class="text-muted">{{ $notif->time_ago ?? $notif->created_at->diffForHumans() }}</small>
                                         </div>
                                     </a>
                                 @empty
-                                    <div class="notification-empty">
-                                        <i class="fa fa-bell-slash-o"></i>
-                                        <p>Tidak ada notifikasi</p>
+                                    <div class="text-center py-4 text-muted">
+                                        <i class="fa fa-bell-slash-o fs-3 mb-2 d-block"></i>
+                                        <p class="mb-0">Tidak ada notifikasi</p>
                                     </div>
                                 @endforelse
-                            </div>
-                            @if($latestNotifications->count() > 0)
-                                <div class="notification-footer">
-                                    <a href="{{ route('notifications.index') }}">Lihat Semua Notifikasi</a>
-                                </div>
+                            </li>
+                            @if(isset($latestNotifications) && $latestNotifications->count() > 0)
+                                <li><hr class="dropdown-divider m-0"></li>
+                                <li class="text-center py-2">
+                                    <a href="{{ route('notifications.index') }}" class="text-decoration-none">Lihat Semua Notifikasi</a>
+                                </li>
                             @endif
-                        </div>
+                        </ul>
                     </li>
 
                     {{-- User Dropdown --}}
-                    <li class="dropdown user-dropdown">
-                        <a href="#" class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode($user->nama ?? $user->name ?? 'User') }}&background=4e73df&color=fff"
-                                 alt="User">
-                            <span class="d-none d-sm-inline">{{ $user->nama ?? $user->name ?? 'User' }}</span>
-                            <i class="fa fa-caret-down"></i>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" 
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode($user->nama ?? $user->name ?? 'User') }}&background=4e73df&color=fff&size=32"
+                                 alt="User" class="rounded-circle me-2" width="32" height="32">
+                            <span class="d-none d-md-inline">{{ $user->nama ?? $user->name ?? 'User' }}</span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ route('ProfileUser.edit') }}"><i class="fa fa-user"></i> Profil Saya</a></li>
-                            <li class="divider"></li>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li>
-                                <form action="{{ route('logout') }}" method="POST" style="margin:0;padding:0;">
+                                <a class="dropdown-item" href="{{ route('ProfileUser.edit') }}">
+                                    <i class="bi bi-person me-2"></i> Profil Saya
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="btn btn-link btn-block text-left"
-                                            style="color:#333; padding: 6px 20px;">
-                                        <i class="fa fa-sign-out"></i> Logout
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Logout
                                     </button>
                                 </form>
                             </li>
@@ -351,36 +359,56 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
 <script>
-    $(document).ready(function () {
-        // Toggle Sidebar
-        $("#menu-toggle").click(function (e) {
-            e.preventDefault();
-            $("#wrapper").toggleClass("toggled");
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar Toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const menuToggle = document.getElementById('menu-toggle');
+        const wrapper = document.getElementById('wrapper');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                wrapper.classList.toggle('toggled');
+            });
+        }
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function() {
+                wrapper.classList.toggle('toggled');
+            });
+        }
+
+        // Menu link active state
+        const menuLinks = document.querySelectorAll('.menu-link');
+        const contentSections = document.querySelectorAll('.content-section');
+
+        menuLinks.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = this.getAttribute('data-target');
+
+                // Update active class
+                menuLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                // Show/hide content sections
+                contentSections.forEach(function(section) {
+                    section.style.display = section.id === target ? 'block' : 'none';
+                });
+
+                // Close sidebar on mobile
+                if (window.innerWidth < 768) {
+                    wrapper.classList.remove('toggled');
+                }
+            });
         });
 
-        // Menu Navigation
-        $(".menu-link").click(function (e) {
-            e.preventDefault();
-
-            $(".menu-link").removeClass("active");
-            $(this).addClass("active");
-
-            $(".content-section").removeClass("active");
-            var target = $(this).data("target");
-            $("#" + target).addClass("active");
-
-            if ($(window).width() < 768) {
-                $("#wrapper").removeClass("toggled");
-            }
-        });
-
-        // Close sidebar ketika klik di luar sidebar (mobile)
-        $(document).click(function (e) {
-            if ($(window).width() < 768) {
-                if (!$(e.target).closest('#sidebar-wrapper, #menu-toggle').length) {
-                    if ($("#wrapper").hasClass("toggled")) {
-                        $("#wrapper").removeClass("toggled");
-                    }
+        // Close sidebar when clicking outside (mobile)
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar-wrapper');
+                const toggleBtn = document.getElementById('sidebarToggle');
+                if (sidebar && toggleBtn && !sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                    wrapper.classList.remove('toggled');
                 }
             }
         });

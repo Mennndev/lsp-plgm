@@ -46,31 +46,35 @@
     {{-- PAGE CONTENT --}}
     <div id="page-content-wrapper">
         {{-- TOP NAVBAR --}}
-        <nav class="navbar navbar-custom navbar-fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
             <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="menu-toggle" id="menu-toggle">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                </div>
+                {{-- Hamburger Toggle --}}
+                <button class="btn btn-link text-dark" type="button" id="sidebarToggle">
+                    <i class="fa fa-bars fs-5"></i>
+                </button>
 
-                <ul class="nav navbar-nav navbar-right">
+                {{-- Right Side --}}
+                <ul class="navbar-nav ms-auto d-flex flex-row align-items-center">
                     {{-- User Dropdown --}}
-                    <li class="dropdown user-dropdown">
-                        <a href="#" class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama ?? 'User') }}&background=4e73df&color=fff" alt="User">
-                            <span class="d-none d-sm-inline">{{ auth()->user()->nama ?? 'User' }}</span>
-                            <i class="fa fa-caret-down"></i>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" 
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->nama ?? 'User') }}&background=4e73df&color=fff&size=32" 
+                                 alt="User" class="rounded-circle me-2" width="32" height="32">
+                            <span class="d-none d-md-inline">{{ auth()->user()->nama ?? 'User' }}</span>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="{{ route('ProfileUser.edit') }}"><i class="fa fa-user"></i> Profil Saya</a></li>
-                            <li class="divider"></li>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li>
-                                <form action="{{ route('logout') }}" method="POST" style="margin:0;padding:0;">
+                                <a class="dropdown-item" href="{{ route('ProfileUser.edit') }}">
+                                    <i class="bi bi-person me-2"></i> Profil Saya
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="btn btn-link btn-block text-left"
-                                            style="color:#333; padding: 6px 20px;">
-                                        <i class="fa fa-sign-out"></i> Logout
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Logout
                                     </button>
                                 </form>
                             </li>
@@ -88,11 +92,9 @@
                 </div>
 
                 @if(session('success'))
-                    <div class="alert alert-success alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
                         {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
 
@@ -168,10 +170,16 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
 <script>
-    // Toggle sidebar
-    $('#menu-toggle').click(function(e) {
-        e.preventDefault();
-        $('#wrapper').toggleClass('toggled');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar Toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const wrapper = document.getElementById('wrapper');
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                wrapper.classList.toggle('toggled');
+            });
+        }
     });
 </script>
 </body>
