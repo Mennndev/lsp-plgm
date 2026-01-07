@@ -75,6 +75,18 @@ class PengajuanController extends Controller
             'approved_by' => auth()->id(),
         ]);
 
+        // Buat record pembayaran otomatis
+        \App\Models\Pembayaran::create([
+            'pengajuan_skema_id' => $pengajuan->id,
+            'user_id' => $pengajuan->user_id,
+            'nominal' => $pengajuan->program->estimasi_biaya ?? 500000,
+            'bank_tujuan' => 'BCA',
+            'nomor_rekening' => '1234567890',
+            'atas_nama' => 'LSP Politeknik LP3I Global Mandiri',
+            'status' => 'pending',
+            'batas_waktu_bayar' => now()->addDays(7),
+        ]);
+
         // Kirim notifikasi ke user
         NotificationService::sendPengajuanApproved($pengajuan->user, $pengajuan);
 

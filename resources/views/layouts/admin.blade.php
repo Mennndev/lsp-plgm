@@ -56,6 +56,13 @@
                     <i class="bi bi-file-earmark-text"></i> Pengajuan Sertifikasi
                 </a>
             </li>
+
+            <li class="{{ request()->is('admin/pembayaran*') ? 'active' : '' }}">
+                <a href="{{ route('admin.pembayaran.index') }}">
+                    <i class="bi bi-credit-card"></i> Pembayaran
+                </a>
+            </li>
+
              <li class="{{ request()->is('admin/pengguna*') ? 'active' : '' }}">
                 <a href="{{ url('admin/berita') }}">
                     <i class="bi bi-newspaper"></i> Berita

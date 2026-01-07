@@ -126,4 +126,9 @@ class PengajuanSkema extends Model
     {
         return $this->hasMany(PengajuanBuktiKompetensi::class);
     }
+
+    public function pembayaran()
+    {
+        return $this->hasOne(Pembayaran::class, 'pengajuan_skema_id');
+    }
 }

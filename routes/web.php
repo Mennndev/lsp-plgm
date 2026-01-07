@@ -125,6 +125,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
     Route::get('/notifications/latest', [NotificationController::class, 'getLatest'])->name('notifications.latest');
 
+    // Pembayaran routes (User)
+    Route::get('/pembayaran/{pengajuanId}', [\App\Http\Controllers\PembayaranController::class, 'show'])->name('pembayaran.show');
+    Route::post('/pembayaran/{pengajuanId}/upload', [\App\Http\Controllers\PembayaranController::class, 'upload'])->name('pembayaran.upload');
+
 });
 
 //Admin Routes
@@ -152,6 +156,16 @@ Route::prefix('admin')
                 ->name('pengajuan.approve');
             Route::post('/pengajuan/{id}/reject', [\App\Http\Controllers\Admin\PengajuanController::class, 'reject'])
                 ->name('pengajuan.reject');
+            
+            // Pembayaran Management (Admin)
+            Route::get('/pembayaran', [\App\Http\Controllers\Admin\PembayaranController::class, 'index'])
+                ->name('pembayaran.index');
+            Route::get('/pembayaran/{id}/detail', [\App\Http\Controllers\Admin\PembayaranController::class, 'show'])
+                ->name('pembayaran.show');
+            Route::post('/pembayaran/{id}/verify', [\App\Http\Controllers\Admin\PembayaranController::class, 'verify'])
+                ->name('pembayaran.verify');
+            Route::post('/pembayaran/{id}/reject', [\App\Http\Controllers\Admin\PembayaranController::class, 'reject'])
+                ->name('pembayaran.reject');
         });
     });
 
