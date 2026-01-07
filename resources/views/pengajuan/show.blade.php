@@ -54,7 +54,7 @@
         </div>
 
         <!-- Payment Section -->
-        @if($pengajuan->status === 'approved' || $pengajuan->status === 'paid')
+        @if($pengajuan->status === 'approved')
             @if($pengajuan->pembayaran)
             <div class="card shadow-sm mb-4 border-{{ $pengajuan->pembayaran->status_badge_color }}">
                 <div class="card-header bg-{{ $pengajuan->pembayaran->status_badge_color }} text-white">

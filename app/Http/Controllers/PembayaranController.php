@@ -15,7 +15,7 @@ class PembayaranController extends Controller
             ->where('user_id', Auth::id())
             ->findOrFail($pengajuanId);
 
-        if ($pengajuan->status !== 'approved' && $pengajuan->status !== 'paid') {
+        if ($pengajuan->status !== 'approved') {
             return redirect()->route('pengajuan.show', $pengajuanId)
                 ->with('error', 'Pengajuan belum disetujui.');
         }

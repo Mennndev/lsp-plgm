@@ -47,8 +47,6 @@ class PembayaranController extends Controller
             'verified_by' => auth()->id(),
         ]);
 
-        $pembayaran->pengajuan->update(['status' => 'paid']);
-
         NotificationService::send(
             $pembayaran->user,
             'Pembayaran Terverifikasi',
