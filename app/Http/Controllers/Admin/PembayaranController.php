@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 
 class PembayaranController extends Controller
 {
+    private const ITEMS_PER_PAGE = 20;
+    
     public function index(Request $request)
     {
         $query = Pembayaran::with(['user', 'pengajuan.program']);
@@ -19,7 +21,7 @@ class PembayaranController extends Controller
 
         $pembayaranList = $query->orderByRaw("FIELD(status, 'uploaded', 'pending', 'verified', 'rejected')")
             ->orderBy('updated_at', 'desc')
-            ->paginate(20);
+            ->paginate(self::ITEMS_PER_PAGE);
 
         return view('admin.pembayaran.index', compact('pembayaranList'));
     }
