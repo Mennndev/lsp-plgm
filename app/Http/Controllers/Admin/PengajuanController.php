@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 
 class PengajuanController extends Controller
 {
+    private const DEFAULT_PAYMENT_AMOUNT = 500000;
+    
     public function index(Request $request)
     {
         $query = PengajuanSkema::with(['user', 'program']);
@@ -73,6 +75,18 @@ class PengajuanController extends Controller
             'tanggal_disetujui' => now(),
             'catatan_admin' => $request->catatan_admin,
             'approved_by' => auth()->id(),
+        ]);
+
+        // Buat record pembayaran otomatis
+        \App\Models\Pembayaran::create([
+            'pengajuan_skema_id' => $pengajuan->id,
+            'user_id' => $pengajuan->user_id,
+            'nominal' => $pengajuan->program->estimasi_biaya ?? self::DEFAULT_PAYMENT_AMOUNT,
+            'bank_tujuan' => 'BCA',
+            'nomor_rekening' => '1234567890',
+            'atas_nama' => 'LSP Politeknik LP3I Global Mandiri',
+            'status' => 'pending',
+            'batas_waktu_bayar' => now()->addDays(7),
         ]);
 
         // Kirim notifikasi ke user

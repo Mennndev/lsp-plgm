@@ -53,6 +53,60 @@
             </div>
         </div>
 
+        <!-- Payment Section -->
+        @if($pengajuan->status === 'approved')
+            @if($pengajuan->pembayaran)
+            <div class="card shadow-sm mb-4 border-{{ $pengajuan->pembayaran->status_badge_color }}">
+                <div class="card-header bg-{{ $pengajuan->pembayaran->status_badge_color }} text-white">
+                    <h5 class="mb-0"><i class="bi bi-credit-card"></i> Informasi Pembayaran</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Nominal:</strong> {{ $pengajuan->pembayaran->formatted_nominal }}</p>
+                            <p class="mb-2">
+                                <strong>Status:</strong> 
+                                <span class="badge bg-{{ $pengajuan->pembayaran->status_badge_color }}">
+                                    {{ $pengajuan->pembayaran->status_label }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            @if($pengajuan->pembayaran->batas_waktu_bayar)
+                            <p class="mb-2">
+                                <strong>Batas Waktu:</strong> 
+                                {{ $pengajuan->pembayaran->batas_waktu_bayar->format('d/m/Y H:i') }} WIB
+                            </p>
+                            @endif
+                            @if($pengajuan->pembayaran->tanggal_upload)
+                            <p class="mb-2">
+                                <strong>Tanggal Upload:</strong> 
+                                {{ $pengajuan->pembayaran->tanggal_upload->format('d/m/Y H:i') }} WIB
+                            </p>
+                            @endif
+                        </div>
+                    </div>
+                    @if($pengajuan->pembayaran->catatan_admin)
+                    <hr>
+                    <div class="alert alert-{{ $pengajuan->pembayaran->status === 'rejected' ? 'danger' : 'info' }} mb-0">
+                        <strong>Catatan Admin:</strong><br>
+                        {{ $pengajuan->pembayaran->catatan_admin }}
+                    </div>
+                    @endif
+                    <hr>
+                    <a href="{{ route('pembayaran.show', $pengajuan->id) }}" class="btn btn-primary">
+                        <i class="bi bi-credit-card"></i> 
+                        @if($pengajuan->pembayaran->status === 'pending' || $pengajuan->pembayaran->status === 'rejected')
+                            Lakukan Pembayaran
+                        @else
+                            Lihat Detail Pembayaran
+                        @endif
+                    </a>
+                </div>
+            </div>
+            @endif
+        @endif
+
         <!-- APL-01 Data -->
         @if($pengajuan->apl01)
         <div class="card shadow-sm mb-4">
